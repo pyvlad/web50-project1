@@ -5,8 +5,14 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from config import Config
 
+# Server-side session support
 sess = Session()
 
+# Set up database
+engine = create_engine(Config.DATABASE_URL)
+db_session = scoped_session(sessionmaker(bind=engine))
+
+# App factory function
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -17,7 +23,3 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
 
     return app
-
-# Set up database
-# engine = create_engine(Config.DATABASE_URL)
-# db = scoped_session(sessionmaker(bind=engine))
