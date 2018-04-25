@@ -1,0 +1,14 @@
+<h1>Hello, {{ username }}!</h1>
+<form action="search" method="get">
+  <div>
+    Search by:<br>
+    <input type="radio" name="key" value="isbn" checked>ISBN Number<br>
+    <input type="radio" name="key" value="title">Title<br>
+    <input type="radio" name="key" value="author">Author<br>
+  </div>
+  <div>
+    Search for:<br>
+    <input type="text" name="value"><br>
+  </div>
+  <input type="submit" value="Go!"><br>
+</form>

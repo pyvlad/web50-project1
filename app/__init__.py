@@ -1,3 +1,6 @@
+import logging
+logging.basicConfig()
+
 from flask import Flask
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -11,6 +14,8 @@ sess = Session()
 # Set up database
 engine = create_engine(Config.DATABASE_URL)
 db_session = scoped_session(sessionmaker(bind=engine))
+logger = logging.getLogger('sqlalchemy.engine')
+logger.setLevel(logging.DEBUG)
 
 # App factory function
 def create_app(config_class=Config):

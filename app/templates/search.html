@@ -1,0 +1,22 @@
+<h2>Search results where {{ key }} contains "{{ value }}"</h2>
+
+{% if results %}
+  <table>
+    <tr>
+      <th>isbn</th>
+      <th>title</th>
+      <th>author</th>
+      <th>year</th>
+    </tr>
+  {% for row in results %}
+    <tr>
+      <td>{{ row.isbn }}</td>
+      <td>{{ row.title }}</td>
+      <td>{{ row.author }}</td>
+      <td>{{ row.year }}</td>
+    </tr>
+  {% endfor %}
+  </table>
+{% else %}
+  <p>No matching results have been found</p>
+{% endif %}
