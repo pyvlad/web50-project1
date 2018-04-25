@@ -1,4 +1,4 @@
-from flask import session, request, render_template
+from flask import session, request, render_template, abort
 from app.main import bp
 from app import db_session
 
@@ -28,3 +28,12 @@ def search():
             "SELECT * FROM books WHERE %s LIKE :value" % key,
             {"value": "%" + value + "%"}).fetchall()
     return render_template("search.html", key=key, value=value, results=results)
+
+
+@bp.route("/book/<isbn>")
+def book(isbn):
+    db_session()
+    book = db_session.execute("SELECT * FROM books WHERE isbn=:isbn", {"isbn": isbn}).fetchone()
+    if book is None:
+        abort(404)
+    return render_template("book.html", book=book)

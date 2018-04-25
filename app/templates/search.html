@@ -10,7 +10,7 @@
     </tr>
   {% for row in results %}
     <tr>
-      <td>{{ row.isbn }}</td>
+      <td><a href="{{ url_for('main.book', isbn=row.isbn) }}">{{ row.isbn }}</a></td>
       <td>{{ row.title }}</td>
       <td>{{ row.author }}</td>
       <td>{{ row.year }}</td>
