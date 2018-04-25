@@ -106,3 +106,4 @@ venv.bak/
 
 # don't track sensitive credentials
 credentials.py
+flask_session/
