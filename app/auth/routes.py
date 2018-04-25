@@ -55,5 +55,6 @@ def login():
 
 @bp.route("/logout")
 def logout():
-    del session["user_id"]
+    if "user_id" in session:
+        del session["user_id"]
     return "you have been logged out"
