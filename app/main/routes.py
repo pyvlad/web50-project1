@@ -1,6 +1,8 @@
-from flask import session, request, render_template, abort, redirect, url_for
+import requests
+from flask import session, request, render_template, abort, redirect, url_for, current_app
 from app.main import bp
 from app import db_session
+
 
 
 @bp.route("/")
@@ -57,6 +59,18 @@ def book(isbn):
                     JOIN users ON users.id=reviews.user_id
                     WHERE book_id=:book_id;
                     """, {"book_id": book.id}).fetchall()
-                return render_template("book.html", book=book, reviews=reviews, user_id=int(user_id))
+
+                goodreads = {}
+                print(current_app.config.get("GOODREADS_KEY"))
+                print(isbn, type(isbn))
+                if current_app.config.get("GOODREADS_KEY"):
+                    res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                        params={"key": current_app.config.get("GOODREADS_KEY"),
+                                "isbns": isbn})
+                    print(res.status_code)
+                    goodreads = (res.json())["books"][0]
+
+                return render_template("book.html", book=book, reviews=reviews,
+                                        user_id=int(user_id), goodreads=goodreads)
     else:
         abort(403)
