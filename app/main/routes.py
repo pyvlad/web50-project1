@@ -1,5 +1,5 @@
 import requests
-from flask import session, request, render_template, abort, redirect, url_for, current_app
+from flask import session, request, render_template, abort, redirect, url_for, current_app, jsonify
 from app.main import bp
 from app import db_session
 
@@ -61,16 +61,49 @@ def book(isbn):
                     """, {"book_id": book.id}).fetchall()
 
                 goodreads = {}
-                print(current_app.config.get("GOODREADS_KEY"))
-                print(isbn, type(isbn))
                 if current_app.config.get("GOODREADS_KEY"):
                     res = requests.get("https://www.goodreads.com/book/review_counts.json",
                         params={"key": current_app.config.get("GOODREADS_KEY"),
-                                "isbns": isbn})
-                    print(res.status_code)
+                                "isbns": isbn},
+                        timeout=5)
+                    if res.status_code != 200:
+                        raise Exception("Request to goodreads was unsuccessful")
                     goodreads = (res.json())["books"][0]
 
                 return render_template("book.html", book=book, reviews=reviews,
                                         user_id=int(user_id), goodreads=goodreads)
     else:
         abort(403)
+
+
+
+
+@bp.route("/api/book/<isbn>", methods=["GET", "POST"])
+def book_api(isbn):
+    db_session()
+    book = db_session.execute("""
+        SELECT books.id, books.title, books.author, books.year,
+            COUNT(reviews.rating) AS total_voters,
+            AVG(reviews.rating) AS average_rating
+        FROM books
+        LEFT JOIN reviews ON books.id=reviews.book_id
+        WHERE books.isbn=:isbn
+        GROUP BY books.id
+        """, {"isbn": isbn}).fetchone()
+
+    if book is None:
+        return jsonify({"error": "Invalid book isbn"}), 422
+    else:
+        if book.average_rating is not None:
+            average_rating = round(float(book.average_rating), 2)
+        else:
+            average_rating = None
+            
+        return jsonify({
+            "isbn": isbn,
+            "title": book.title,
+            "author": book.author,
+            "publication_date": book.year,
+            "total_voters": book.total_voters,
+            "average_rating": average_rating
+        })
