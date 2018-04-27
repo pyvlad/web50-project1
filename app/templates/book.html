@@ -1,63 +1,57 @@
-<h1>Book Page</h1>
+{% extends "base.html" %}
 
-<h2>Description</h2>
-<table>
-  <tr>
-    <td>isbn</td><td>{{ book.isbn }}</td>
-  </tr>
-  <tr>
-    <td>title</td><td>{{ book.title }}</td>
-  <tr>
-    <td>author</td><td>{{ book.author }}</td>
-  </tr>
-  <tr>
-    <td>year</td><td>{{ book.year }}</td>
-  </tr>
-  <tr>
-    <td>GOODREADS average rating</td><td>{{ goodreads.average_rating }}</td>
-  </tr>
-  <tr>
-    <td>GOODREADS rating votes</td><td>{{ goodreads.work_ratings_count }}</td>
-  </tr>
-</table>
+{% block title %}Book{% endblock %}
 
+{% block content %}
+  <h1>Book Page</h1>
 
-<h2>Reviews</h2>
-{% set ns = namespace(own_review = false) %}
-{% if reviews %}
+  <h2>Description</h2>
   <table>
-    <tr>
-      <th>user</th><th>review</th><th>rating</th>
-    </tr>
-    {% for review in reviews %}
-      {% if review.user_id == user_id %}
-        {% set ns.own_review = true %}
-      {% endif %}
-      <tr>
-        <td>{{ review.username }}</td><td>{{ review.message }}</td><td>{{ review.rating }}</td>
-      <tr>
-    {% endfor %}
+    <tr><td>isbn</td><td>{{ book.isbn }}</td></tr>
+    <tr><td>title</td><td>{{ book.title }}</td></tr>
+    <tr><td>author</td><td>{{ book.author }}</td></tr>
+    <tr><td>year</td><td>{{ book.year }}</td></tr>
+    <tr><td>GOODREADS average rating</td><td>{{ goodreads.average_rating }}</td></tr>
+    <tr><td>GOODREADS rating votes</td><td>{{ goodreads.work_ratings_count }}</td></tr>
   </table>
-{% else %}
-  <p>This book has no reviews yet.</p>
-{% endif %}
 
-{% if not ns.own_review %}
-  <h2>Leave review</h2>
-  {% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
-  <form action="" method="post">
-    <p>Your opinion:</p>
-    <p><textarea name="message" rows="8" cols="80"></textarea></p>
-    <p>Rating:</p>
-    <select name="rating">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3" selected>3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-    </select>
-    <p><input type="submit" value="Login"></p>
-  </form>
-{% else %}
-  <p>You've already left a review</p>
-{% endif %}
+  <h2>Reviews</h2>
+  {% set ns = namespace(own_review = false) %}
+  {% if reviews %}
+    <table>
+      <tr>
+        <th>user</th><th>review</th><th>rating</th>
+      </tr>
+      {% for review in reviews %}
+        {% if review.user_id == user_id %}
+          {% set ns.own_review = true %}
+        {% endif %}
+        <tr>
+          <td>{{ review.username }}</td><td>{{ review.message }}</td><td>{{ review.rating }}</td>
+        <tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>This book has no reviews yet.</p>
+  {% endif %}
+
+  {% if not ns.own_review %}
+    <h2>Leave review</h2>
+    {% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+    <form action="" method="post">
+      <p>Your opinion:</p>
+      <p><textarea name="message" rows="8" cols="80"></textarea></p>
+      <p>Rating:</p>
+      <select name="rating">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <p><input type="submit" value="Login"></p>
+    </form>
+  {% else %}
+    <p>You have reviewed this book.</p>
+  {% endif %}
+{% endblock %}

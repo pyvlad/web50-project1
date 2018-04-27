@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{% block title %}{% endblock %} [project1]</title>
+    {% endblock %}
+  </head>
+  <body>
+    <div id="header">
+      {% block header %}
+      <h1>Web 50: Project 1</h1>
+      {% endblock %}
+    </div>
+    <div id="navigation">
+      {% block navigation %}
+      <ul>
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+        {% if 'user_id' in session %}
+          <li class='auth-nav'><a href="{{ url_for('auth.logout') }}">Sign out</a></li>
+        {% else %}
+          <li class='auth-nav'><a href="{{ url_for('auth.login') }}">Sign in</a></li>
+          <li class='auth-nav'><a href="{{ url_for('auth.register') }}">Sign up</a></li>
+        {% endif %}
+      </ul>
+      {% endblock %}
+    </div>
+    <div id="content">
+      {% block content %}
+      {% endblock %}
+    </div>
+    <div id="footer">
+      {% block footer %}
+      <p>&copy; Copyright 2018.
+        Source code on <a href="https://github.com/pyvlad/web50-project1">github</a>.
+      </p>
+      {% endblock %}
+    </div>
+  </body>
+</html>

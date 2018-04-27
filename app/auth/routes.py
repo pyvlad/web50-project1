@@ -28,8 +28,12 @@ def register():
                     VALUES (:username, :password_hash)""",
                     {"username": request.form.get('username'), "password_hash": password_hash})
                 db_session.commit()
+
+                user = db_session.execute("SELECT * FROM users WHERE username=:username",
+                    {"username": request.form.get('username')}).fetchone()
                 session["user_id"] = user.id
-                return 'you have been registered'# redirect(url_for('index'))
+                return redirect(url_for('main.index'))
+
     return render_template('auth/register.html', error=error)
 
 
@@ -47,7 +51,7 @@ def login():
                 {"username": request.form.get('username')}).fetchone()
             if user and check_password_hash(user.password_hash, request.form.get('password')):
                 session["user_id"] = user.id
-                return 'you have been logged in' #redirect(url_for('index'))
+                return redirect(url_for('main.index'))
             else:
                 error = "Login fail. Wrong username/password."
     return render_template('auth/login.html', error=error)
@@ -57,4 +61,4 @@ def login():
 def logout():
     if "user_id" in session:
         del session["user_id"]
-    return "you have been logged out"
+    return redirect(url_for('main.index'))
